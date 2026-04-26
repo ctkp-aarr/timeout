@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Webhook Spammer</title>
+    <!-- Discord Embed Settings -->
+    <meta property="og:title" content="Webhook Spammer" />
+    <meta property="og:description" content="Advanced Webhook Sending Tool" />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#0099ff" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --galaxy-dark: #0a0a1a;
+            --galaxy-darker: #050510;
+            --galaxy-purple: #7d3cff;
+            --galaxy-pink: #ff006e;
+            --galaxy-cyan: #00d9ff;
+            --galaxy-blue: #1a4d7a;
+            --galaxy-light: #e0e0ff;
+            --white-text: #f5f5f5;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes softGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px rgba(125, 60, 255, 0.4),
+                             0 0 20px rgba(0, 217, 255, 0.2);
+            }
+            50% {
+                text-shadow: 0 0 20px rgba(125, 60, 255, 0.6),
+                             0 0 30px rgba(0, 217, 255, 0.3),
+                             0 0 40px rgba(255, 0, 110, 0.2);
+            }
+        }
+
+        @keyframes softBorder {
+            0%, 100% {
+                border-color: var(--galaxy-purple);
+                box-shadow: 0 0 15px rgba(125, 60, 255, 0.3),
+                           0 0 25px rgba(0, 217, 255, 0.1),
+                           inset 0 0 15px rgba(125, 60, 255, 0.05);
+            }
+            50% {
+                border-color: var(--galaxy-cyan);
+                box-shadow: 0 0 25px rgba(125, 60, 255, 0.4),
+                           0 0 35px rgba(0, 217, 255, 0.2),
+                           inset 0 0 20px rgba(0, 217, 255, 0.05);
+            }
+        }
+
+        @keyframes focusSoft {
+            0% {
+                box-shadow: 0 0 8px rgba(125, 60, 255, 0.2),
+                           inset 0 0 5px rgba(125, 60, 255, 0.05);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(125, 60, 255, 0.4),
+                           0 0 20px rgba(0, 217, 255, 0.2),
+                           inset 0 0 10px rgba(125, 60, 255, 0.1);
+            }
+        }
+
+        @keyframes sakuraFall {
+            0% {
+                transform: translateX(0) translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-400px) translateY(800px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sakuraFloat {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(-30px);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--galaxy-light);
+            background: linear-gradient(135deg, var(--galaxy-darker) 0%, var(--galaxy-dark) 50%, #1a0033 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            padding-top: 40px;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(125, 60, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 0, 110, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .discord-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(10, 10, 26, 0.8);
+            color: var(--galaxy-cyan);
+            border: 2px solid var(--galaxy-purple);
+            border-radius: 8px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 0 15px rgba(125, 60, 255, 0.3),
+                       0 0 30px rgba(0, 217, 255, 0.1);
+            font-size: 0.85rem;
+        }
+        
+        .discord-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(125, 60, 255, 0.5),
+                       0 0 40px rgba(0, 217, 255, 0.2),
+                       0 0 60px rgba(255, 0, 110, 0.1);
+            border-color: var(--galaxy-cyan);
+            color: var(--galaxy-cyan);
+        }
+        
+        .discord-button svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .container {
+            background: linear-gradient(135deg, rgba(10, 10, 26, 0.9) 0%, rgba(26, 77, 122, 0.4) 100%);
+            border: 2px solid var(--galaxy-purple);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 20px rgba(125, 60, 255, 0.3),
+                       0 0 40px rgba(0, 217, 255, 0.1),
+                       inset 0 0 30px rgba(125, 60, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out,
+                      softBorder 4s ease-in-out infinite;
+            z-index: 10;
+            margin-bottom: 40px;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--galaxy-purple), var(--galaxy-cyan), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            color: var(--galaxy-cyan);
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2rem;
+            letter-spacing: 0.5px;
+            animation: fadeIn 1s ease-out,
+                      softGlow 2s ease-in-out infinite;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--galaxy-purple);
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 0.2s; }
+        .form-group:nth-child(2) { animation-delay: 0.3s; }
+        .form-group:nth-child(3) { animation-delay: 0.4s; }
+        .form-group:nth-child(4) { animation-delay: 0.5s; }
+        .form-group:nth-child(5) { animation-delay: 0.6s; }
+        .form-group:nth-child(6) { animation-delay: 0.7s; }
+        .form-group:nth-child(7) { animation-delay: 0.8s; }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            color: var(--galaxy-cyan);
+            font-size: 0.9rem;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(125, 60, 255, 0.5);
+            background: rgba(26, 77, 122, 0.3);
+            color: var(--galaxy-light);
+            font-family: 'Inter', sans-serif;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(125, 60, 255, 0.1),
+                       inset 0 0 5px rgba(0, 217, 255, 0.05);
+        }
+
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder,
+        textarea::placeholder {
+            color: rgba(224, 224, 255, 0.3);
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            animation: focusSoft 0.5s ease-out forwards;
+            border-color: var(--galaxy-cyan);
+            background: rgba(26, 77, 122, 0.5);
+        }
+
+        textarea {
+            resize: vertical;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            padding-right: 40px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d9ff' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 0.6s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 24px;
+            border: 2px solid var(--galaxy-purple);
+            background: rgba(26, 77, 122, 0.3);
+            color: var(--galaxy-cyan);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(125, 60, 255, 0.2);
+            border-radius: 8px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            left: -100%;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--galaxy-purple), var(--galaxy-cyan));
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+        
+        button:hover {
+            color: var(--galaxy-darker);
+            box-shadow: 0 0 25px rgba(125, 60, 255, 0.4),
+                       0 0 40px rgba(0, 217, 255, 0.2);
+        }
+
+        button:hover::before {
+            left: 0;
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: 0 0 10px rgba(125, 60, 255, 0.1);
+        }
+
+        button:disabled:hover {
+            border-color: var(--galaxy-purple);
+            color: var(--galaxy-cyan);
+            box-shadow: 0 0 10px rgba(125, 60, 255, 0.1);
+        }
+        
+        #logs {
+            background: rgba(5, 5, 16, 0.7);
+            border: 1px solid rgba(125, 60, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            box-shadow: inset 0 0 15px rgba(125, 60, 255, 0.05),
+                       inset 0 0 20px rgba(0, 217, 255, 0.03);
+            position: relative;
+            z-index: 1;
+        }
+
+        #logs div {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(125, 60, 255, 0.15);
+            line-height: 1.4;
+            word-break: break-all;
+        }
+
+        #logs div:last-child {
+            border-bottom: none;
+        }
+        
+        #logs .success {
+            color: #00ff88;
+        }
+
+        #logs .error {
+            color: var(--galaxy-pink);
+        }
+
+        #logs .info {
+            color: var(--galaxy-cyan);
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(125, 60, 255, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--galaxy-purple);
+            border-radius: 4px;
+            box-shadow: 0 0 5px rgba(125, 60, 255, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--galaxy-cyan);
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
+        }
+
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .format-option {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid rgba(125, 60, 255, 0.4);
+            background: rgba(26, 77, 122, 0.2);
+            color: var(--galaxy-cyan);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+
+        .format-option.active {
+            background: linear-gradient(135deg, var(--galaxy-purple), var(--galaxy-cyan));
+            color: var(--galaxy-darker);
+            box-shadow: 0 0 20px rgba(125, 60, 255, 0.4),
+                       0 0 30px rgba(0, 217, 255, 0.2);
+            border-color: var(--galaxy-cyan);
+        }
+
+        .row-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .row-group.full {
+            grid-template-columns: 1fr;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+                max-width: 100%;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            label {
+                font-size: 0.7rem;
+            }
+
+            button {
+                font-size: 0.75rem;
+                padding: 10px;
+            }
+
+            .row-group {
+                grid-template-columns: 1fr;
+            }
+
+            .format-option {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="https://discord.gg/8HK7AQ6WQt" target="_blank" class="discord-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" fill="currentColor">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+        </svg>
+        Discord
+    </a>
+    
+    <div class="container">
+        <h1>Timeout Tool</h1>
+        <div class="subtitle">Discord Timeout Manager</div>
+        
+        <!-- Tokens Section -->
+        <div class="form-group">
+            <label for="tokensInput">Tokens (改行区切り):</label>
+            <textarea id="tokensInput" rows="5" placeholder="Token 1&#10;Token 2&#10;Token 3&#10;..."></textarea>
+        </div>
+
+        <!-- Server ID -->
+        <div class="form-group">
+            <label for="serverId">Server ID:</label>
+            <input type="text" id="serverId" placeholder="123456789012345678" />
+        </div>
+
+        <!-- Timeout Duration -->
+        <div class="form-group">
+            <label for="timeoutDuration">Timeout Duration (seconds):</label>
+            <input type="number" id="timeoutDuration" value="60" min="1" max="2592000" />
+        </div>
+
+        <!-- Reason -->
+        <div class="form-group">
+            <label for="reason">Reason (optional):</label>
+            <input type="text" id="reason" placeholder="Reason for timeout" />
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <button id="startBtn">▶ Apply Timeout</button>
+            <button id="stopBtn" disabled>⏹ Stop</button>
+        </div>
+        
+        <!-- Logs -->
+        <div id="logs"></div>
+    </div>
+
+    <script>
+        let isSending = false;
+
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const logsDiv = document.getElementById('logs');
+
+        function log(msg, isSuccess = false, type = 'error') {
+            const now = new Date().toLocaleTimeString();
+            const logLine = document.createElement('div');
+            logLine.textContent = `[${now}] ${msg}`;
+            
+            if (type === 'info') {
+                logLine.className = 'info';
+            } else {
+                logLine.className = isSuccess ? 'success' : 'error';
+            }
+            
+            logLine.style.animation = 'fadeIn 0.3s ease-out forwards';
+            logsDiv.appendChild(logLine);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        // Get bot's highest role
+        async function getBotHighestRole(token, serverId) {
+            try {
+                const res = await fetch(
+                    `https://discord.com/api/v10/guilds/${serverId}/members/@me`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': token,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (res.ok) {
+                    const botMember = await res.json();
+                    return botMember.roles; // Array of role IDs
+                } else {
+                    log(`✗ Failed to get bot info: ${res.status}`, false);
+                    return null;
+                }
+            } catch (err) {
+                log(`✗ Error getting bot info: ${err.message}`, false);
+                return null;
+            }
+        }
+
+        // Get all guild members
+        async function getGuildMembers(token, serverId) {
+            try {
+                let allMembers = [];
+                let afterId = null;
+                const limit = 1000;
+
+                while (true) {
+                    if (!isSending) break;
+
+                    const url = new URL(`https://discord.com/api/v10/guilds/${serverId}/members`);
+                    url.searchParams.append('limit', limit);
+                    if (afterId) {
+                        url.searchParams.append('after', afterId);
+                    }
+
+                    const res = await fetch(url.toString(), {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': token,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!res.ok) {
+                        log(`✗ Failed to fetch members: ${res.status}`, false);
+                        break;
+                    }
+
+                    const members = await res.json();
+                    if (members.length === 0) break;
+
+                    allMembers = allMembers.concat(members);
+                    afterId = members[members.length - 1].user.id;
+
+                    log(`📝 Fetched ${allMembers.length} members...`, false, 'info');
+
+                    if (members.length < limit) break;
+
+                    // Avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                return allMembers;
+            } catch (err) {
+                log(`✗ Error fetching members: ${err.message}`, false);
+                return [];
+            }
+        }
+
+        // Get role position
+        async function getRoles(token, serverId) {
+            try {
+                const res = await fetch(
+                    `https://discord.com/api/v10/guilds/${serverId}/roles`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': token,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+                if (res.ok) {
+                    const roles = await res.json();
+                    return roles;
+                } else {
+                    return [];
+                }
+            } catch (err) {
+                log(`✗ Error getting roles: ${err.message}`, false);
+                return [];
+            }
+        }
+
+        // Get highest role position of a member
+        function getMemberHighestRolePosition(member, roles) {
+            if (!member.roles || member.roles.length === 0) return -1;
+
+            let highestPosition = -1;
+            for (const roleId of member.roles) {
+                const role = roles.find(r => r.id === roleId);
+                if (role && role.position > highestPosition) {
+                    highestPosition = role.position;
+                }
+            }
+            return highestPosition;
+        }
+
+        // Get highest role position of bot
+        function getBotHighestRolePosition(botRoles, roles) {
+            if (!botRoles || botRoles.length === 0) return -1;
+
+            let highestPosition = -1;
+            for (const roleId of botRoles) {
+                const role = roles.find(r => r.id === roleId);
+                if (role && role.position > highestPosition) {
+                    highestPosition = role.position;
+                }
+            }
+            return highestPosition;
+        }
+
+        async function applyTimeout(token, serverId, userId, durationMs, reason) {
+            try {
+                const body = {
+                    communicate_disabled_until: new Date(Date.now() + durationMs).toISOString()
+                };
+                
+                if (reason) {
+                    body.audit_log_reason = reason;
+                }
+
+                const res = await fetch(
+                    `https://discord.com/api/v10/guilds/${serverId}/members/${userId}`,
+                    {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': token,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    }
+                );
+
+                if (res.ok) {
+                    log(`✓ Timeout applied to ${userId.slice(0, 8)}...`, true);
+                    return true;
+                } else if (res.status === 429) {
+                    log(`⚠ Rate limited (429)`, false);
+                    return false;
+                } else if (res.status === 403) {
+                    log(`✗ Permission denied for ${userId.slice(0, 8)}...`, false);
+                    return false;
+                } else {
+                    log(`✗ Error: Status ${res.status}`, false);
+                    return false;
+                }
+            } catch (err) {
+                log(`✗ ${err.message}`, false);
+                return false;
+            }
+        }
+
+        startBtn.addEventListener('click', async () => {
+            const tokensInput = document.getElementById('tokensInput').value;
+            const tokens = tokensInput
+                .split('\n')
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
+
+            const serverId = document.getElementById('serverId').value.trim();
+            const durationSeconds = parseInt(document.getElementById('timeoutDuration').value, 10);
+            const reason = document.getElementById('reason').value.trim();
+
+            if (tokens.length === 0) {
+                alert('⚠ Add at least one token');
+                return;
+            }
+
+            if (!serverId) {
+                alert('⚠ Enter Server ID');
+                return;
+            }
+
+            if (isNaN(durationSeconds) || durationSeconds < 1) {
+                alert('⚠ Duration must be 1 second or more');
+                return;
+            }
+
+            startBtn.disabled = true;
+            stopBtn.disabled = false;
+            isSending = true;
+
+            const durationMs = durationSeconds * 1000;
+
+            log(`⚡ Starting timeout process for ${tokens.length} token(s)...`, true);
+
+            for (let tokenIndex = 0; tokenIndex < tokens.length; tokenIndex++) {
+                if (!isSending) break;
+
+                const token = tokens[tokenIndex];
+                const shortToken = token.slice(0, 10) + '...';
+
+                log(`\n🔹 Processing token ${tokenIndex + 1}/${tokens.length} (${shortToken})`, false, 'info');
+
+                // Get bot's highest role
+                const botRoles = await getBotHighestRole(token, serverId);
+                if (!botRoles) continue;
+
+                // Get all roles in guild
+                const roles = await getRoles(token, serverId);
+                const botRolePosition = getBotHighestRolePosition(botRoles, roles);
+
+                log(`Bot role position: ${botRolePosition}`, false, 'info');
+
+                // Get all members
+                const members = await getGuildMembers(token, serverId);
+                log(`Total members: ${members.length}`, false, 'info');
+
+                if (members.length === 0) {
+                    log(`No members found`, false);
+                    continue;
+                }
+
+                // Filter members with lower role position
+                const targetMembers = members.filter(member => {
+                    if (member.user.bot) return false; // Skip bots
+                    const memberRolePosition = getMemberHighestRolePosition(member, roles);
+                    return memberRolePosition < botRolePosition;
+                });
+
+                log(`Found ${targetMembers.length} members to timeout`, false, 'info');
+
+                // Apply timeout
+                let successCount = 0;
+                for (let i = 0; i < targetMembers.length; i++) {
+                    if (!isSending) break;
+
+                    const member = targetMembers[i];
+                    const result = await applyTimeout(token, serverId, member.user.id, durationMs, reason);
+                    if (result) successCount++;
+
+                    // Rate limit prevention
+                    await new Promise(resolve => setTimeout(resolve, 300));
+
+                    if ((i + 1) % 10 === 0) {
+                        log(`Progress: ${i + 1}/${targetMembers.length}`, false, 'info');
+                    }
+                }
+
+                log(`✓ Token ${tokenIndex + 1}: ${successCount}/${targetMembers.length} members timed out`, true);
+
+                // Delay between tokens
+                if (tokenIndex < tokens.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            }
+
+            if (isSending) {
+                isSending = false;
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                log(`\n✓ Timeout application completed`, true);
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            isSending = false;
+            log('⏹ Timeout application stopped', true);
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+
+        // Create falling stars for galaxy effect
+        function createStar() {
+            const star = document.createElement('div');
+            star.style.position = 'fixed';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.width = Math.random() * 3 + 1 + 'px';
+            star.style.height = star.style.width;
+            star.style.background = ['var(--galaxy-cyan)', 'var(--galaxy-purple)', '#ffffff'][Math.floor(Math.random() * 3)];
+            star.style.borderRadius = '50%';
+            star.style.pointerEvents = 'none';
+            star.style.zIndex = '1';
+            star.style.boxShadow = `0 0 ${Math.random() * 8 + 5}px currentColor`;
+            
+            const duration = Math.random() * 3000 + 2000;
+            const delay = Math.random() * 1000;
+            
+            star.style.animation = `twinkle ${duration}ms ease-in-out ${delay}ms infinite`;
+            
+            document.body.appendChild(star);
+            
+            setTimeout(() => star.remove(), 60000);
+        }
+        
+        // Generate stars continuously
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                createStar();
+            }
+        }, 100);
+        
+        // Create initial stars
+        for (let i = 0; i < 50; i++) {
+            setTimeout(createStar, i * 50);
+        }
+    </script>
+</body>
+</html>
